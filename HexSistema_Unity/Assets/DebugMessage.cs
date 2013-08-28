@@ -5,7 +5,7 @@ public class DebugMessage : MonoBehaviour {
 	
 	private GUIText myText;
 	
-	void Start(){
+	void Awake(){
 		myText = this.guiText;
 	}
 	

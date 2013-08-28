@@ -21,7 +21,7 @@ public class World : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		StartCoroutine(GenerateRadialGrid(Config.reg.tileSize , worldRadius, routineTimer));	
+		//GenerateRadialGrid(Config.reg.tileSize , worldRadius, routineTimer);	
 	}
 	
 	// destroys everything andd clears containers
@@ -47,11 +47,11 @@ public class World : MonoBehaviour {
 		}
 		if(Input.GetKeyUp(KeyCode.R)){
 			ResetWorld();
-			StartCoroutine(GenerateRadialGrid(Config.reg.tileSize , worldRadius, routineTimer));
+			StartCoroutine(GenerateRadialGrid(Config.reg.tileSize , worldRadius));
 		}
 	}
 	
-	public IEnumerator GenerateRadialGrid(float tileSize , int gridRadius, float timer){
+	public IEnumerator GenerateRadialGrid(float tileSize , int gridRadius){
 		
 		Utils.instance.debugMsg.Log("GenerateRadialGrid: Start.", true);
 		
@@ -83,10 +83,9 @@ public class World : MonoBehaviour {
 					H = H.neighbors[i];
 				}
 			}
-			
-			Utils.instance.debugMsg.Log("GenerateRadialGrid: Added Tile: " 
-				+ Utils.instance.allTiles.Count, false);
-			yield return new WaitForSeconds(timer);
+			Utils.instance.debugMsg.Log("GenerateRadialGrid: New Logic Tile: " 
+				+ Utils.instance.allTiles.Count, true);
+			yield return new WaitForSeconds(routineTimer);
 		}	
 		
 		// logical references to other tiles and corners
@@ -98,7 +97,7 @@ public class World : MonoBehaviour {
 		Corner.ConnectAllProtrudes();
 		
 		
-		SetupVisualGrid();
+		StartCoroutine(SetupVisualGrid());
 		Debug.Log("Tiles: " + Utils.instance.allTiles.Count);
 		Debug.Log("Corners: " + Utils.instance.allCorners.Count);
 		Utils.instance.debugMsg.Log("GenerateRadialGrid: Finished.", false);
@@ -137,21 +136,32 @@ public class World : MonoBehaviour {
 		});
 	}	
 	
-	public void SetupVisualGrid(){
-		
+	public IEnumerator SetupVisualGrid(){
 		// reset registry list
 		Utils.instance.allVisual = new List<VisualHex>();
+		Utils.instance.debugMsg.Log("Setup Visual Tiles : Start.", false);
 		
-		Utils.instance.allTiles.ForEach(t => 
-		{
-			GameObject obj = (GameObject)GameObject.Instantiate(visualPrefab, t.wPos, Quaternion.identity);
-			VisualHex v = obj.GetComponent<VisualHex>();
-			//mutual references
-			v.logicTile = t;
-			t.visual = v;
-			v.transform.position = v.logicTile.wPos;
-			v.transform.parent = this.transform;
-			Utils.instance.allVisual.Add(v);
-		});
+		for (int i = 0; i < Utils.instance.allTiles.Count; i++) {
+			AddVisualTile(Utils.instance.allTiles[i]);
+			yield return new WaitForSeconds(routineTimer);
+		}
+		
+		Utils.instance.debugMsg.Log("Setup Visual Tiles : End.", false);
+	}
+	
+	public void AddVisualTile (Tile t) {
+		
+		GameObject obj = (GameObject)GameObject.Instantiate(visualPrefab, 
+			t.wPos, Quaternion.identity);
+		VisualHex v = obj.GetComponent<VisualHex>();
+		//mutual references
+		v.logicTile = t;
+		t.visual = v;
+		v.transform.position = v.logicTile.wPos;
+		v.transform.parent = this.transform;
+		Utils.instance.allVisual.Add(v);
+		Utils.instance.debugMsg.Log("New Visual Tile: " 
+				+ Utils.instance.allVisual.Count, true);
+		
 	}
 }
