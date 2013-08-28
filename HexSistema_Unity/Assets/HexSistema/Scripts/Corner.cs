@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Corner {
+public abstract class Corner {
 	public string index;
   
     public Vector3 wPos;  // location
@@ -20,8 +20,11 @@ public class Corner {
     public int watershed_size;
 	
 	// logical references
+	public int touchesNum;
     public Tile[] touches;
+	public int protrudesNum;
     public Edge[] protrudes;
+	public int adjacentNum;
     public Corner[] adjacent;
 	
 	public Corner(Tile tile, int pDirection, Vector3 wPoint)
@@ -36,10 +39,14 @@ public class Corner {
 		
 		elevation = 0;
 		
-		touches = new Tile[3];
+		touchesNum = Utils.GetCornerTouchesNum(tile.tileType);
+		touches = new Tile[touchesNum];
 		touches[0] = tile;
 		
-	    protrudes = new Edge[3];
+		protrudesNum = Utils.GetCornerProtrudesNum(tile.tileType);
+	    protrudes = new Edge[protrudesNum];
+		
+		adjacentNum = Utils.GetCornerAdjacentNum(tile.tileType);
 	    adjacent = new Corner[3];
 	}
 	
@@ -48,139 +55,55 @@ public class Corner {
 		return touches[0].waterbool;
 	}
 	
-	public static void ConnectProtrudes(Corner corner){
-		switch(corner.direction){
-		case 0 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[1];
-			corner.protrudes[1] = corner.touches[0].borders[1];
-			corner.protrudes[2] = corner.touches[0].borders[5];
-			break;
-		case 1 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[2];	
-			corner.protrudes[1] = corner.touches[0].borders[2];
-			corner.protrudes[2] = corner.touches[0].borders[0];
-			break;
-		case 2 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[3]; 
-			corner.protrudes[1] = corner.touches[0].borders[3];
-			corner.protrudes[2] = corner.touches[0].borders[1];
-			break;
-		case 3 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[4];	
-			corner.protrudes[1] = corner.touches[0].borders[4];
-			corner.protrudes[2] = corner.touches[0].borders[2];
-			break;
-		case 4 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[5];	
-			corner.protrudes[1] = corner.touches[0].borders[5];
-			corner.protrudes[2] = corner.touches[0].borders[3];
-			break;
-		case 5 : 
-			if(corner.touches[1] != null) corner.protrudes[0] = corner.touches[1].borders[0]; 
-			corner.protrudes[1] = corner.touches[0].borders[0];
-			corner.protrudes[2] = corner.touches[0].borders[4];
-			break;
-		}
-	}
+	public abstract void ConnectProtrudes();
 	
 	public static void ConnectAllProtrudes(){
-		Utils.instance.allCorners.ForEach(c => ConnectProtrudes(c));
+		Utils.instance.allCorners.ForEach(c => c.ConnectProtrudes());
 	}
 	
-	public static void ConnectAdjacent(Corner corner){
-		switch(corner.direction){
-		case 0 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[1];
-			corner.adjacent[1] = corner.touches[0].corners[1];
-			corner.adjacent[2] = corner.touches[0].corners[5];
-			break;
-		case 1 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[2];	
-			corner.adjacent[1] = corner.touches[0].corners[2];
-			corner.adjacent[2] = corner.touches[0].corners[0];
-			break;
-		case 2 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[3]; 
-			corner.adjacent[1] = corner.touches[0].corners[3];
-			corner.adjacent[2] = corner.touches[0].corners[1];
-			break;
-		case 3 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[4];	
-			corner.adjacent[1] = corner.touches[0].corners[4];
-			corner.adjacent[2] = corner.touches[0].corners[2];
-			break;
-		case 4 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[5];	
-			corner.adjacent[1] = corner.touches[0].corners[5];
-			corner.adjacent[2] = corner.touches[0].corners[3];
-			break;
-		case 5 : 
-			if(corner.touches[1] != null) corner.adjacent[0] = corner.touches[1].corners[0]; 
-			corner.adjacent[1] = corner.touches[0].corners[0];
-			corner.adjacent[2] = corner.touches[0].corners[4];
-			break;
-		}
-	}
+	public abstract void ConnectAdjacent();
 	
 	public static void ConnectAllAdjacent(){
-		Utils.instance.allCorners.ForEach(c => ConnectAdjacent(c));
+		Utils.instance.allCorners.ForEach(c => c.ConnectAdjacent());
 	}
 	
-	public static void ConnectTouches(Corner corner){
-		int j = corner.direction;
-		switch(j){
-			case 0 : {						
-				corner.touches[1] = corner.touches[0].neighbors[5];
-				corner.touches[2] = corner.touches[0].neighbors[0];
-			}
-			break;
-			case 1 : 
-			case 2 : 
-			case 3 : 
-			case 4 : 
-			case 5 : {
-				corner.touches[1] = corner.touches[0].neighbors[j-1];
-				corner.touches[2] = corner.touches[0].neighbors[j];
-			}
-			break;
-		}
-	}
+	public abstract void ConnectTouches ();
 	
 	public static void ConnectAllTouches(){
-		Utils.instance.allCorners.ForEach(c => ConnectTouches(c));
+		Utils.instance.allCorners.ForEach(c => c.ConnectTouches());
 	}
 
-	public static Corner FindCornerAt(Vector3 wPoint, float tolerance){
+	public Corner FindCornerAt(Vector3 wPoint, float tolerance){
 		
 		Corner temp = Utils.instance.allCorners.Find(corner =>
-			Vector3.Distance(corner.wPos, wPoint) <= tolerance);
+			Vector3.Distance(wPos, wPoint) <= tolerance);
 		
 		return temp;
 	}
 	
-	public static float UpdateCornerElevation(Corner corner, bool smooth){
-		float old = corner.touches[0].elevation;
-		float res = corner.touches[0].elevation;
-		for (int i = 0; i < 3; i++) {
-			if(corner.touches[i] != null){
-				res = Mathf.Max(res, corner.touches[i].elevation);
-				if(corner.touches[i].terrain == TileTerrain.WATER){
-					corner.elevation = Config.reg.SeaLevel;
-					return corner.elevation;
+	public float UpdateCornerElevation(bool smooth){
+		float old = touches[0].elevation;
+		float res = touches[0].elevation;
+		for (int i = 0; i < touchesNum; i++) {
+			if(touches[i] != null){
+				res = Mathf.Max(res, touches[i].elevation);
+				if(touches[i].terrain == TileTerrain.WATER){
+					elevation = Config.reg.SeaLevel;
+					return elevation;
 				}
 			}
 		}
 		if(smooth) {
 			res = Mathf.Lerp(old, res, 0.5f);
 		}
-		corner.elevation = res;
+		elevation = res;
 		return res;
 		
 	}
 	
 	public static void UpdateAllCornersElevation(bool smooth){
 		Utils.instance.allCorners.ForEach(c => {
-			UpdateCornerElevation(c, smooth);
+			c.UpdateCornerElevation(smooth);
 		});
 	}
 }

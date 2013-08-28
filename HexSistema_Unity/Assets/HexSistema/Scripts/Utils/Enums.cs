@@ -1,4 +1,10 @@
-﻿#region Direction-related Enums
+﻿public enum TileType {
+	SQUARE,
+	HEX
+}
+
+
+#region Direction-related Enums
 
 public enum NeighbourDirection {
 	NE 	= 0,

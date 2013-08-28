@@ -33,29 +33,29 @@ public int index;
 		});
 	}
 	
-	public static void MakeEdges(Tile hex){
+	public static void MakeEdges(Tile tile){
 		
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < tile.cornerNum; i++) {
 			Edge newEdge;
 			
-			if(i == 5){
+			if(i == tile.cornerNum-1){
 				newEdge = new Edge(
-					hex.corners[i],
-					hex.corners[0],
-					hex,
-					hex.neighbors[i]);
+					tile.corners[i],
+					tile.corners[0],
+					tile,
+					tile.neighbors[i]);
 			}
 			else {
 				newEdge = new Edge(
-					hex.corners[i],
-					hex.corners[i+1],
-					hex,
-					hex.neighbors[i]);
+					tile.corners[i],
+					tile.corners[i+1],
+					tile,
+					tile.neighbors[i]);
 			}
 			Utils.instance.allEdges.Add(newEdge);
 			
 			// connects to tile
-			hex.borders[i] = newEdge;
+			tile.borders[i] = newEdge;
 		}
 	}
 };
