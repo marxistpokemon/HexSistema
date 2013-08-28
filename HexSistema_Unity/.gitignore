@@ -12,3 +12,5 @@
 /Library/ScriptAssemblies
 /obj
 /Temp
+/Builds
+/Builds/*
