@@ -23,7 +23,7 @@ public abstract class VisualTile : MonoBehaviour {
 			logicTile.index + 
 			" | Elev: " + logicTile.elevation +
 			" | Water: " + logicTile.waterbool +
-			" | Border: " + logicTile.border, false);
+			" | Border: " + logicTile.border, true);
 	}
 	
 	#region Gizmos

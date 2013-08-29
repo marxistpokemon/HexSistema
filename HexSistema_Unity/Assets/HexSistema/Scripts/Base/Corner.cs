@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public abstract class Corner {
 	public string index;
   
@@ -38,6 +39,7 @@ public abstract class Corner {
 		Utils.instance.allCorners.Add(this);
 		
 		elevation = 0;
+		water = true;
 		
 		touchesNum = Utils.GetCornerTouchesNum(tile.tileType);
 		touches = new Tile[touchesNum];
@@ -48,12 +50,21 @@ public abstract class Corner {
 		
 		adjacentNum = Utils.GetCornerAdjacentNum(tile.tileType);
 	    adjacent = new Corner[3];
-		
-		water = GetWater();
 	}
 	
 	public bool GetWater(){
-		return touches[0].waterbool;
+		
+		bool res = false;// = touches[0].waterbool;
+		
+		// if it is close to water
+		foreach (Tile next in touches) {
+			if(next == null) {
+				continue;
+			} 
+			if(next.waterbool) res = true;
+		}
+		
+		return res;
 	}
 	
 	public abstract void ConnectProtrudes();

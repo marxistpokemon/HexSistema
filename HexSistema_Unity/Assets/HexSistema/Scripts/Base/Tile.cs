@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public abstract class Tile {
 	
 	public TileType tileType;
@@ -73,7 +74,7 @@ public abstract class Tile {
 	
 	public void UpdateIsBorder(){
 		// changes the border status based on amount of neighbours
-		if(GetNeighbourCount() < 6){
+		if(GetNeighbourCount() < cornerNum){
 			border = true;	
 		}
 		else {

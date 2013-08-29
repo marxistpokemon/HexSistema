@@ -9,7 +9,7 @@ public class PerlinElevation : BaseModule {
 	public float maxElevation = 10;
 	public int octaves = 4;
 	public float frequency = 5f;
-	public float amplitude = 3f;
+	private float amplitude = 1f;
 	public bool smooth = true;
 	
 	public override void Run(){
@@ -27,8 +27,8 @@ public class PerlinElevation : BaseModule {
 			float startingElevation;
 			if(resetElevation){
 				startingElevation = baseElevation;
-				corner.elevation = 0;
-				corner.touches[0].elevation = 0;
+				corner.elevation = Config.reg.SeaLevel;
+				corner.touches[0].elevation = Config.reg.SeaLevel;
 			}
 			else {
 				startingElevation = 0;
@@ -48,21 +48,19 @@ public class PerlinElevation : BaseModule {
 			
 			cornerElevation = Mathf.Clamp(cornerElevation, Config.reg.SeaLevel, maxElevation);
 			tileElevation = Mathf.Clamp(tileElevation, Config.reg.SeaLevel, maxElevation);
-			corner.elevation = startingElevation + cornerElevation*maxElevation;
-			corner.touches[0].elevation	= startingElevation + tileElevation*maxElevation;
-			
+			corner.elevation += startingElevation + cornerElevation*maxElevation;
+			corner.touches[0].elevation	+= startingElevation + tileElevation*maxElevation;
 			
 			if(!smooth){
 				corner.elevation = Mathf.Floor(corner.elevation);
 				corner.touches[0].elevation = Mathf.Floor(corner.touches[0].elevation);
 			}
-			
 			corner.touches[0].UpdateTerrainByElevation();
 			corner.touches[0].UpdateIsBorder();
-			
-			corner.water = corner.GetWater();
-			if(corner.GetWater()) corner.elevation = Config.reg.SeaLevel;	
-			
+		}
+		
+		foreach (var corner in Utils.instance.allCorners) {
+			if(corner.water) corner.elevation = Config.reg.SeaLevel;
 		}
 	}	
 }

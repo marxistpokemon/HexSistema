@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//[System.Serializable]
+[System.Serializable]
 public class CubeTile : Tile {
 
 	public CubeTile (TileType pTileType, Coord pCPos, float pSize, Vector3 pWPos) :

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//[System.Serializable]
+[System.Serializable]
 public class CubeCorner : Corner {
 
 	public CubeCorner(CubeTile pTile, int pDirection, Vector3 wPoint ) 

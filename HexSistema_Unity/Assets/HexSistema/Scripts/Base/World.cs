@@ -35,6 +35,10 @@ public abstract class World : MonoBehaviour {
 			RunAllModules();
 		}
 		
+		if(Input.GetKeyUp(KeyCode.A)){
+			Utils.instance.allTiles.ForEach(t=>t.UpdateIsBorder());
+		}
+		
 		if(Input.GetKeyUp(KeyCode.Return)){
 			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
 			Tile.UpdateAllTerrainByElevation();
