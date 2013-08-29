@@ -48,6 +48,8 @@ public abstract class Corner {
 		
 		adjacentNum = Utils.GetCornerAdjacentNum(tile.tileType);
 	    adjacent = new Corner[3];
+		
+		GetWater();
 	}
 	
 	public bool GetWater(){

@@ -5,53 +5,54 @@ using System.Collections.Generic;
 public abstract class World : MonoBehaviour {
 	
 	public TileType tileType;
-	
 	public GameObject visualPrefab;
-	
-	public float baseElevation = 0;
-	public int perlinOctaves = 4;
-	public float perlinFrq = 5f;
-	public float perlinAmp = 3f;
-	public bool perlinSmooth = true;
-	
 	public float routineTimer = 0.0f;
+	public List<BaseModule> allModules;
 	
 	public abstract IEnumerator GenerateRegularGrid(int burstSize);
 	
 	public abstract void AddVisualTile (Tile t);
+	
+	public void Start(){
+		allModules = new List<BaseModule>();
+		foreach (var item in GetComponents<BaseModule>()) {
+			allModules.Add(item);
+			item.id = allModules.IndexOf(item);
+		}
+	}
 
-	public void GeneratePerlinElevations(){
+	public void Update () {
+
+		if(Input.GetKeyUp(KeyCode.V)){
+			RunAllModules();
+			//GeneratePerlinElevations();
+			//Corner.UpdateAllCornersElevation(false);
+			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
+		}
+		if(Input.GetKeyUp(KeyCode.T)){
+			ResetWorld();
+		}
+		if(Input.GetKeyUp(KeyCode.R)){
+			//ResetWorld();
+			StartCoroutine(GenerateRegularGrid(100));
+		}
+	}
+	
+	public void RunAllModules(){
+		allModules.ForEach(m=> RunModule(m.id));
+	}
+	
+	public bool RunModule(int id){
+		BaseModule temp = null;
 		
-		PerlinNoise perlin = new PerlinNoise(Mathf.FloorToInt(Random.value*10000000));
-		perlin.LoadPermTableIntoTexture();
+		temp = allModules.Find(m => m.id == id);
 		
-		Utils.instance.allCorners.ForEach(corner => {
-			
-			corner.elevation = baseElevation + perlin.FractalNoise2D(
-				corner.wPos.x/Config.reg.tileSize , 
-				corner.wPos.z/Config.reg.tileSize ,
-				perlinOctaves, perlinFrq, perlinAmp);
-			
-			corner.touches[0].elevation = baseElevation + perlin.FractalNoise2D(
-				corner.touches[0].wPos.x/Config.reg.tileSize , 
-				corner.touches[0].wPos.z/Config.reg.tileSize ,
-				perlinOctaves, perlinFrq, perlinAmp);
+		if(!temp || !temp.active)
+			return false;
 		
-			if(!perlinSmooth){
-				corner.elevation = Mathf.Floor(corner.elevation);
-			}
-			
-			
-			corner.elevation = Mathf.Clamp(corner.elevation, Config.reg.SeaLevel, 1000);
-			corner.touches[0].elevation = Mathf.Clamp(corner.touches[0].elevation, 
-				Config.reg.SeaLevel, 1000);
-			corner.touches[0].Update();
-			corner.GetWater();
-			if(corner.GetWater()) corner.elevation = Config.reg.SeaLevel;
-			// corner.touches[0].elevation = corner.touches[0].GetElevationFromCorners();
-				
-		});
-	}	
+		temp.Run();
+		return true;
+	}
 	
 	public IEnumerator SetupVisualGrid(int burstSize){
 		// reset registry list

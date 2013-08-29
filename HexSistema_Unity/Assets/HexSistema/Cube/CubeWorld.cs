@@ -6,21 +6,7 @@ public class CubeWorld : World {
 	public int worldSizeQ = 1;
 	public int worldSizeR = 1;
 
-	public void Update () {
 
-		if(Input.GetKeyUp(KeyCode.V)){
-			GeneratePerlinElevations();
-			//Corner.UpdateAllCornersElevation(false);
-			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
-		}
-		if(Input.GetKeyUp(KeyCode.T)){
-			ResetWorld();
-		}
-		if(Input.GetKeyUp(KeyCode.R)){
-			//ResetWorld();
-			StartCoroutine(GenerateRegularGrid(100));
-		}
-	}
 	
 	public override IEnumerator GenerateRegularGrid(int burstSize){
 		Utils.instance.debugMsg.Log("GenerateRegularGrid: Start.", true);

@@ -46,6 +46,7 @@ public abstract class Tile {
 		
 		// terrain
 		terrain = TileTerrain.WATER;
+		waterbool = true;
 		
 		// refs
 		neighbors = new Tile[Utils.GetTileCornerNum(tileType)];

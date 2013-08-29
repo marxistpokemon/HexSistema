@@ -35,7 +35,8 @@ public class CubeCorner : Corner {
 			}
 			
 		} catch (System.Exception ex) {
-			
+			border = true;
+			touches[0].border = true;
 		}
 		
 		
@@ -48,7 +49,8 @@ public class CubeCorner : Corner {
 			adjacent[2] = touches[3].corners[2];
 			adjacent[3] = touches[0].corners[3];	
 		} catch (System.Exception ex) {
-			
+			border = true;
+			touches[0].border = true;
 		}
 		
 	}
@@ -60,7 +62,8 @@ public class CubeCorner : Corner {
 			protrudes[2] = touches[3].borders[3];
 			protrudes[3] = touches[0].borders[0];
 		} catch (System.Exception ex) {
-			
+			border = true;
+			touches[0].border = true;
 		}
 		
 	}
