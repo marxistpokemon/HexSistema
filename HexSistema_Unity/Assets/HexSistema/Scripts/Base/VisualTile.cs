@@ -15,9 +15,15 @@ public abstract class VisualTile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-		logicTile.Update();
-		transform.renderer.sharedMaterial =Config.reg.terrainMaterials[(int)logicTile.terrain];
+		transform.renderer.sharedMaterial = Config.reg.terrainMaterials[(int)logicTile.terrain];
+	}
+	
+	public void OnMouseDown(){
+		Utils.instance.debugMsg.Log(
+			logicTile.index + 
+			" | Elev: " + logicTile.elevation +
+			" | Water: " + logicTile.waterbool +
+			" | Border: " + logicTile.border, false);
 	}
 	
 	#region Gizmos
@@ -58,7 +64,7 @@ public abstract class VisualTile : MonoBehaviour {
 		
 		Mesh mesh = transform.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
-        //Vector3[] normals = mesh.normals;
+        Vector3[] normals = mesh.normals;
         int i = 0;
 		int changed = 0;
 		
@@ -95,7 +101,7 @@ public abstract class VisualTile : MonoBehaviour {
         }
         mesh.vertices = vertices;
 		
-		MeshCollider mc = transform.GetComponentInChildren<MeshCollider>();
+		MeshCollider mc = transform.GetComponent<MeshCollider>();
 		mc.sharedMesh = null;
 		mc.sharedMesh = mesh;
 		

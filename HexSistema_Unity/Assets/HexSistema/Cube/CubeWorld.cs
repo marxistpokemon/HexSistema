@@ -5,8 +5,6 @@ public class CubeWorld : World {
 	
 	public int worldSizeQ = 1;
 	public int worldSizeR = 1;
-
-
 	
 	public override IEnumerator GenerateRegularGrid(int burstSize){
 		Utils.instance.debugMsg.Log("GenerateRegularGrid: Start.", true);

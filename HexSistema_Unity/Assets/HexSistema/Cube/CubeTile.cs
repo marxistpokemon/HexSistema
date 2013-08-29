@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//[System.Serializable]
 public class CubeTile : Tile {
 
 	public CubeTile (TileType pTileType, Coord pCPos, float pSize, Vector3 pWPos) :
@@ -13,6 +14,8 @@ public class CubeTile : Tile {
 		corners[1] = new CubeCorner(this, 1, new Vector3(wPos.x + size/2, wPos.y, wPos.z + size/2));
 		corners[2] = new CubeCorner(this, 2, new Vector3(wPos.x + size/2, wPos.y, wPos.z - size/2));
 		corners[3] = new CubeCorner(this, 3, new Vector3(wPos.x - size/2, wPos.y, wPos.z - size/2));
+		
+		SetWaterTile(true);
 	}
 	
 	public override Tile AddNewNeighbour(int direction) {

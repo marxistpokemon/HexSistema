@@ -22,13 +22,24 @@ public abstract class World : MonoBehaviour {
 	}
 
 	public void Update () {
-
-		if(Input.GetKeyUp(KeyCode.V)){
-			RunAllModules();
-			//GeneratePerlinElevations();
-			//Corner.UpdateAllCornersElevation(false);
-			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
+		
+		if(Input.GetKeyUp(KeyCode.Alpha0)){
+			RunModule(0);
 		}
+		
+		if(Input.GetKeyUp(KeyCode.Alpha1)){
+			RunModule(1);
+		}
+
+		if(Input.GetKeyUp(KeyCode.A)){
+			RunAllModules();
+		}
+		
+		if(Input.GetKeyUp(KeyCode.Return)){
+			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
+			Tile.UpdateAllTerrainByElevation();
+		}
+		
 		if(Input.GetKeyUp(KeyCode.T)){
 			ResetWorld();
 		}

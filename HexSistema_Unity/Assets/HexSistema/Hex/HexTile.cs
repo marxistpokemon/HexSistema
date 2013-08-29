@@ -15,6 +15,8 @@ public class HexTile : Tile {
 		corners[3] = new HexCorner(this, 3, new Vector3(wPos.x, wPos.y, wPos.z - height/2));
 		corners[4] = new HexCorner(this, 4, new Vector3(wPos.x - width/2, wPos.y, wPos.z - height/4));
 		corners[5] = new HexCorner(this, 5, new Vector3(wPos.x - width/2, wPos.y, wPos.z + height/4));
+		
+		SetWaterTile(true);
 	}
 	
 	public override Tile AddNewNeighbour(int direction) {

@@ -7,6 +7,4 @@ public abstract class BaseModule : MonoBehaviour {
 	public bool active = false;
 	
 	public abstract void Run();
-	
-	
 }

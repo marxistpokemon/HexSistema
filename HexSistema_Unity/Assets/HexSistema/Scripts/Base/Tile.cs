@@ -17,20 +17,15 @@ public abstract class Tile {
     public bool oceanbool;  // ocean
     public bool coast;  // land polygon touching an ocean
     public bool border;  // at the edge of the map
-    //public EBiome biome;  // biome type (see article)
     public float elevation;  // 0.0-1.0
-    public float moisture;  // 0.0-1.0
-
+    public float moisture;  // 0.0-1.
     public Tile[] neighbors;
     public Edge[] borders;
     public Corner[] corners;
 	public int cornerNum;
-	
-	public VisualTile visual;
-	
+	public VisualTile visual;	
 	public TileTerrain terrain;
 
-	
 	public Tile (TileType pTileType, Coord pCPos, float pSize, Vector3 pWPos){
 		index = "T:[ "+pCPos.q.ToString() + ", " + pCPos.r.ToString()+" ]";
 		
@@ -44,36 +39,39 @@ public abstract class Tile {
 		cPos = pCPos;
 		wPos = pWPos;
 		
-		// terrain
-		terrain = TileTerrain.WATER;
-		waterbool = true;
-		
 		// refs
 		neighbors = new Tile[Utils.GetTileCornerNum(tileType)];
 		corners = new Corner[Utils.GetTileCornerNum(tileType)];
 		borders = new Edge[Utils.GetTileCornerNum(tileType)];
 		
 		// geometry
-		size = pSize;	
+		size = pSize;
 	}
 	
-	// CAUTION - called once per frame by this.visual
-	public void Update(){
-		
+	public static void UpdateAllTerrainByElevation(){
+		Utils.instance.allTiles.ForEach(t=>t.UpdateTerrainByElevation());
+	}
+	
+	public void UpdateTerrainByElevation(){
 		// changes terrain based on elevation
-		terrain = TileTerrain.LAND;
-		waterbool = false;
-		if(elevation <= Config.reg.SeaLevel){
-			terrain = TileTerrain.WATER;
-			waterbool = true;
-		}
-		if(elevation >= Config.reg.RockLevel ) {
-			terrain = TileTerrain.ROCK;
-		}
-		if(elevation >= Config.reg.SnowLevel ) {
-			terrain = TileTerrain.SNOW;
-		}
 		
+		if(elevation <= Config.reg.SeaLevel){
+			SetWaterTile(true);
+		}
+		else {
+			terrain = TileTerrain.LAND;
+			SetWaterTile(false);
+			
+			if(elevation >= Config.reg.RockLevel ) {
+				terrain = TileTerrain.ROCK;
+			}
+			if(elevation >= Config.reg.SnowLevel ) {
+				terrain = TileTerrain.SNOW;
+			}
+		}
+	}
+	
+	public void UpdateIsBorder(){
 		// changes the border status based on amount of neighbours
 		if(GetNeighbourCount() < 6){
 			border = true;	
@@ -81,12 +79,10 @@ public abstract class Tile {
 		else {
 			border = false;
 		}
-		
 		// updates corners
 		for (int i = 0; i < cornerNum; i++) {
 			corners[i].border = border;
 		}
-		
 	}
 	
 	public float GetElevationFromCorners(){
@@ -97,6 +93,20 @@ public abstract class Tile {
 			}
 		}
 		return newElev;
+	}
+	
+	public void SetWaterTile(bool newState){
+		
+		waterbool = newState;
+		
+		if(waterbool) {
+			terrain = TileTerrain.WATER;
+		}
+		
+		foreach (var corner in corners) {
+			corner.water = waterbool;
+		}
+		
 	}
 	
 	#region Neighbours
