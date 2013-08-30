@@ -14,6 +14,8 @@ public class PerlinElevation : BaseModule {
 	
 	public override void Run(){
 		
+		Debug.Log("RunModule"+id);
+		
 		PerlinNoise perlin = new PerlinNoise(Mathf.FloorToInt(Random.value*10000000));
 		perlin.LoadPermTableIntoTexture();
 		
@@ -55,12 +57,7 @@ public class PerlinElevation : BaseModule {
 				corner.elevation = Mathf.Floor(corner.elevation);
 				corner.touches[0].elevation = Mathf.Floor(corner.touches[0].elevation);
 			}
-			corner.touches[0].UpdateTerrainByElevation();
-			corner.touches[0].UpdateIsBorder();
 		}
-		
-		foreach (var corner in Utils.instance.allCorners) {
-			if(corner.water) corner.elevation = Config.reg.SeaLevel;
-		}
+		Debug.Log("FinishModule"+id);
 	}	
 }

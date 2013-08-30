@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
+//[System.Serializable]
 public abstract class Corner {
 	public string index;
   
@@ -40,6 +40,7 @@ public abstract class Corner {
 		
 		elevation = 0;
 		water = true;
+		coast = false;
 		
 		touchesNum = Utils.GetCornerTouchesNum(tile.tileType);
 		touches = new Tile[touchesNum];
@@ -52,19 +53,29 @@ public abstract class Corner {
 	    adjacent = new Corner[3];
 	}
 	
-	public bool GetWater(){
+	public static void UpdateAllCoasts(){
+		Utils.instance.allCorners.ForEach(corner => {
+			corner.coast = corner.GetCoast();
+			if(corner.coast)
+				corner.elevation = Config.reg.SeaLevel;
+		});
+	}
+	
+	public bool GetCoast(){
 		
-		bool res = false;// = touches[0].waterbool;
+		if(water) return false;
 		
-		// if it is close to water
 		foreach (Tile next in touches) {
-			if(next == null) {
-				continue;
+			if(next != null) {
+				if(next.terrain == TileTerrain.WATER) 
+					return true;
 			} 
-			if(next.waterbool) res = true;
 		}
-		
-		return res;
+		return false;
+	}
+	
+	public bool GetWater(){
+		return touches[0].waterbool;
 	}
 	
 	public abstract void ConnectProtrudes();

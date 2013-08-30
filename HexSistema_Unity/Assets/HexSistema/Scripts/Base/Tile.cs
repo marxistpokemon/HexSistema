@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
+//[System.Serializable]
 public abstract class Tile {
 	
 	public TileType tileType;
@@ -47,6 +47,27 @@ public abstract class Tile {
 		
 		// geometry
 		size = pSize;
+		
+		waterbool = true;
+		oceanbool = true;
+		coast = false;
+	}
+	
+	#region Updates
+	public static void UpdateAllStatus(){
+		UpdateAllTerrainByElevation();
+		Corner.UpdateAllCoasts();
+		UpdateAllCoasts();
+		UpdateAllBorders();
+		VisualTile.UpdateAllMaterials();
+	}
+	
+	public static void UpdateAllBorders(){
+		Utils.instance.allTiles.ForEach(t=>t.UpdateIsBorder());
+	}
+	
+	public static void UpdateAllCoasts(){
+		Utils.instance.allTiles.ForEach(t=>t.UpdateIsCoast());
 	}
 	
 	public static void UpdateAllTerrainByElevation(){
@@ -57,11 +78,21 @@ public abstract class Tile {
 		// changes terrain based on elevation
 		
 		if(elevation <= Config.reg.SeaLevel){
-			SetWaterTile(true);
+			waterbool = true;
+			terrain = TileTerrain.WATER;
+			coast = false;
+			foreach(Corner corner in corners){
+				corner.water = true;
+				corner.coast = false;
+				corner.elevation = Config.reg.SeaLevel;
+			}
 		}
 		else {
+			waterbool = false;
 			terrain = TileTerrain.LAND;
-			SetWaterTile(false);
+			foreach(Corner corner in corners){
+				corner.water = false;
+			}
 			
 			if(elevation >= Config.reg.RockLevel ) {
 				terrain = TileTerrain.ROCK;
@@ -69,6 +100,19 @@ public abstract class Tile {
 			if(elevation >= Config.reg.SnowLevel ) {
 				terrain = TileTerrain.SNOW;
 			}
+		}
+	}
+	
+	public void UpdateIsCoast(){
+		
+		int waterN = GetNeighbourCountByTerrain(TileTerrain.WATER);
+		
+		if(!waterbool &&
+			waterN > 0){
+			coast = true;
+		}
+		else {
+			coast = false;
 		}
 	}
 	
@@ -84,33 +128,18 @@ public abstract class Tile {
 		for (int i = 0; i < cornerNum; i++) {
 			corners[i].border = border;
 		}
+	
 	}
 	
-	public float GetElevationFromCorners(){
-		float newElev = 0;
-		for (int i = 0; i < cornerNum; i++) {
-			if(corners[i] != null){
-				newElev += corners[i].elevation/cornerNum;
-			}
-		}
-		return newElev;
-	}
-	
-	public void SetWaterTile(bool newState){
-		
-		waterbool = newState;
-		
-		if(waterbool) {
-			terrain = TileTerrain.WATER;
-		}
-		
-		foreach (var corner in corners) {
-			corner.water = waterbool;
-		}
-		
-	}
+	#endregion
 	
 	#region Neighbours
+	
+	public static Tile FindTileAt(int Q, int R){
+		return Utils.instance.allTiles.Find( t =>
+			t.cPos.q == Q &&
+			t.cPos.r == R);
+	}
 	
 	public int GetNeighbourCount(){
 		int res = 0;
@@ -122,19 +151,7 @@ public abstract class Tile {
 	
 	public abstract Tile AddNewNeighbour(int direction); 
 	
-	public Tile FindNeighborAt(int direction){
-		
-		Coord neighborCoord = new Coord(
-			cPos.q + Utils.instance.hexNeighborsRelCPos[direction].q,
-			cPos.r + Utils.instance.hexNeighborsRelCPos[direction].r);
-		
-		Tile res = Utils.instance.allTiles.Find(
-			tRes => 
-			tRes.cPos.q == neighborCoord.q &&
-			tRes.cPos.r == neighborCoord.r);
-		
-		return res;
-	}
+	public abstract Tile FindNeighborAt(int direction);
 	
 	public static void ConnectAllNeighbours(){
 		Utils.instance.allTiles.ForEach(t => {

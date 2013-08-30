@@ -29,6 +29,7 @@ public class CubeWorld : World {
 			}
 		}	
 		
+		Utils.instance.debugMsg.Log("GenerateRegularGrid: Start connections.", false);
 		// logical references to other tiles and corners
 		Tile.ConnectAllNeighbours();
 		Corner.ConnectAllTouches();
@@ -36,9 +37,9 @@ public class CubeWorld : World {
 		// logical references to edges
 		Edge.MakeAllEdges();
 		Corner.ConnectAllProtrudes();
+		Utils.instance.debugMsg.Log("GenerateRegularGrid: End connections.", false);
 		
-		
-		StartCoroutine(SetupVisualGrid(100));
+		StartCoroutine(SetupVisualGrid(worldSizeQ*2));
 		Debug.Log("Tiles: " + Utils.instance.allTiles.Count);
 		Debug.Log("Corners: " + Utils.instance.allCorners.Count);
 		Utils.instance.debugMsg.Log("GenerateRegularGrid: Finished.", false);
@@ -53,7 +54,7 @@ public class CubeWorld : World {
 		v.logicTile = t;
 		t.visual = v;
 		v.transform.position = v.logicTile.wPos;
-		v.transform.parent = this.transform;
+		//v.transform.parent = this.transform;
 		Utils.instance.allVisual.Add(v);
 		Utils.instance.debugMsg.Log("New Visual Tile: " 
 				+ Utils.instance.allVisual.Count, true);

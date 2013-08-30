@@ -15,8 +15,6 @@ public class HexTile : Tile {
 		corners[3] = new HexCorner(this, 3, new Vector3(wPos.x, wPos.y, wPos.z - height/2));
 		corners[4] = new HexCorner(this, 4, new Vector3(wPos.x - width/2, wPos.y, wPos.z - height/4));
 		corners[5] = new HexCorner(this, 5, new Vector3(wPos.x - width/2, wPos.y, wPos.z + height/4));
-		
-		SetWaterTile(true);
 	}
 	
 	public override Tile AddNewNeighbour(int direction) {
@@ -42,6 +40,20 @@ public class HexTile : Tile {
 		HexTile temp = new HexTile(tileType, posNew, Config.reg.tileSize, worldPos);
 		neighbors[direction] = temp;
 		return temp;
+	}
+	
+	public override Tile FindNeighborAt(int direction){
+		
+		Coord neighborCoord = new Coord(
+			cPos.q + Utils.instance.hexNeighborsRelCPos[direction].q,
+			cPos.r + Utils.instance.hexNeighborsRelCPos[direction].r);
+		
+		Tile res = Utils.instance.allTiles.Find(
+			tRes => 
+			tRes.cPos.q == neighborCoord.q &&
+			tRes.cPos.r == neighborCoord.r);
+		
+		return res;
 	}
 	
 	public override void ConnectNeighbours(){

@@ -14,8 +14,6 @@ public class CubeTile : Tile {
 		corners[1] = new CubeCorner(this, 1, new Vector3(wPos.x + size/2, wPos.y, wPos.z + size/2));
 		corners[2] = new CubeCorner(this, 2, new Vector3(wPos.x + size/2, wPos.y, wPos.z - size/2));
 		corners[3] = new CubeCorner(this, 3, new Vector3(wPos.x - size/2, wPos.y, wPos.z - size/2));
-		
-		SetWaterTile(true);
 	}
 	
 	public override Tile AddNewNeighbour(int direction) {
@@ -40,6 +38,20 @@ public class CubeTile : Tile {
 		CubeTile temp = new CubeTile(tileType, posNew, Config.reg.tileSize, worldPos);
 		neighbors[direction] = temp;
 		return temp;
+	}
+	
+	public override Tile FindNeighborAt(int direction){
+		
+		Coord neighborCoord = new Coord(
+			cPos.q + Utils.instance.cubeNeighborsRelCPos[direction].q,
+			cPos.r + Utils.instance.cubeNeighborsRelCPos[direction].r);
+		
+		Tile res = Utils.instance.allTiles.Find(
+			tRes => 
+			tRes.cPos.q == neighborCoord.q &&
+			tRes.cPos.r == neighborCoord.r);
+		
+		return res;
 	}
 	
 	public override void ConnectNeighbours(){

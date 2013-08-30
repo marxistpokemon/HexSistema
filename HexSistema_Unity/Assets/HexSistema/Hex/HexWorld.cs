@@ -65,7 +65,7 @@ public class HexWorld : World {
 		v.logicTile = t;
 		t.visual = v;
 		v.transform.position = v.logicTile.wPos;
-		v.transform.parent = this.transform;
+		//v.transform.parent = this.transform;
 		Utils.instance.allVisual.Add(v);
 		Utils.instance.debugMsg.Log("New Visual Tile: " 
 				+ Utils.instance.allVisual.Count, true);

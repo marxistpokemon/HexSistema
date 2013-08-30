@@ -13,9 +13,12 @@ public abstract class VisualTile : MonoBehaviour {
 		cornerNum = Utils.GetTileCornerNum(logicTile.tileType);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		transform.renderer.sharedMaterial = Config.reg.terrainMaterials[(int)logicTile.terrain];
+	public static void UpdateAllMaterials(){
+		Utils.instance.allVisual.ForEach(visual=>
+			visual.transform.renderer.sharedMaterial = 
+				Config.reg.terrainMaterials[(int)visual.logicTile.terrain]
+			);
+		
 	}
 	
 	public void OnMouseDown(){
@@ -23,7 +26,15 @@ public abstract class VisualTile : MonoBehaviour {
 			logicTile.index + 
 			" | Elev: " + logicTile.elevation +
 			" | Water: " + logicTile.waterbool +
+			" | Coast: " + logicTile.coast +
 			" | Border: " + logicTile.border, true);
+		foreach (Corner corner in logicTile.corners) {
+			Utils.instance.debugMsg.Log(
+			corner.index + 
+			" | Elev: " + corner.elevation +
+			" | Water: " + corner.water +
+			" | Coast: " + corner.coast, false);
+		}
 	}
 	
 	#region Gizmos

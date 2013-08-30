@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public abstract class World : MonoBehaviour {
 	
@@ -17,7 +18,7 @@ public abstract class World : MonoBehaviour {
 		allModules = new List<BaseModule>();
 		foreach (var item in GetComponents<BaseModule>()) {
 			allModules.Add(item);
-			item.id = allModules.IndexOf(item);
+			//item.id = allModules.IndexOf(item);
 		}
 	}
 
@@ -33,28 +34,26 @@ public abstract class World : MonoBehaviour {
 
 		if(Input.GetKeyUp(KeyCode.A)){
 			RunAllModules();
-		}
-		
-		if(Input.GetKeyUp(KeyCode.A)){
-			Utils.instance.allTiles.ForEach(t=>t.UpdateIsBorder());
+			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
 		}
 		
 		if(Input.GetKeyUp(KeyCode.Return)){
 			Utils.instance.allVisual.ForEach(t => t.ElevationDeform());
-			Tile.UpdateAllTerrainByElevation();
 		}
 		
 		if(Input.GetKeyUp(KeyCode.T)){
 			ResetWorld();
 		}
 		if(Input.GetKeyUp(KeyCode.R)){
-			//ResetWorld();
-			StartCoroutine(GenerateRegularGrid(100));
+			StartCoroutine(GenerateRegularGrid(1000));
 		}
 	}
 	
 	public void RunAllModules(){
-		allModules.ForEach(m=> RunModule(m.id));
+		
+		for (int i = 0; i < allModules.Count; i++) {
+			RunModule(i);
+		}
 	}
 	
 	public bool RunModule(int id){
@@ -65,7 +64,9 @@ public abstract class World : MonoBehaviour {
 		if(!temp || !temp.active)
 			return false;
 		
+		Tile.UpdateAllStatus();
 		temp.Run();
+		Tile.UpdateAllStatus();
 		return true;
 	}
 	
