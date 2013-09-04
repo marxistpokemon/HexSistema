@@ -91,7 +91,7 @@ public abstract class VisualTile : MonoBehaviour {
 					Vector2 wCornerXZ = new Vector2(logicTile.corners[j].wPos.x, 
 						logicTile.corners[j].wPos.z);
 					float distance = Vector2.Distance(wVerticeXZ, wCornerXZ);
-					if(distance <=Config.reg.cornerTolerance) {
+					if(distance <= Config.reg.cornerTolerance) {
 						changed++;
 						vertices[i].y = 
 							logicTile.corners[j].elevation + 

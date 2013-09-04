@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//[System.Serializable]
+[System.Serializable]
 public abstract class Tile {
 	
 	public TileType tileType;

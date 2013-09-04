@@ -38,14 +38,14 @@ public class PerlinElevation : BaseModule {
 			
 			// calculate values to -1 to 1 domain
 			float cornerElevation = perlin.FractalNoise2D(
-				corner.wPos.x/Config.reg.tileSize , 
-				corner.wPos.z/Config.reg.tileSize ,
+				corner.wPos.x/Config.reg.tileSize, 
+				corner.wPos.z/Config.reg.tileSize,
 				octaves, frequency, amplitude)/amplitude;
 			
 			
 			float tileElevation = perlin.FractalNoise2D(
-				corner.touches[0].wPos.x/Config.reg.tileSize , 
-				corner.touches[0].wPos.z/Config.reg.tileSize ,
+				corner.touches[0].wPos.x/Config.reg.tileSize, 
+				corner.touches[0].wPos.z/Config.reg.tileSize,
 				octaves, frequency, amplitude)/amplitude;
 			
 			cornerElevation = Mathf.Clamp(cornerElevation, Config.reg.SeaLevel, maxElevation);

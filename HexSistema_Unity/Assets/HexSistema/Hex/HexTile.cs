@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class HexTile : Tile {
 
 	public HexTile (TileType pTileType, Coord pCPos, float pSize, Vector3 pWPos) :
